@@ -1,91 +1,12 @@
-# Embedding Atlas
-
-[![NPM Version](https://img.shields.io/npm/v/embedding-atlas)](https://www.npmjs.com/package/embedding-atlas)
-[![PyPI - Version](https://img.shields.io/pypi/v/embedding-atlas)](https://pypi.org/project/embedding-atlas/)
-[![Paper](https://img.shields.io/badge/paper-arXiv:2505.06386-b31b1b.svg)](https://arxiv.org/abs/2505.06386)
-![Build](https://github.com/apple/embedding-atlas/actions/workflows/ci.yml/badge.svg)
-[![GitHub License](https://img.shields.io/github/license/apple/embedding-atlas)](./LICENSE)
-
-Embedding Atlas is a tool that provides interactive visualizations for large embeddings and their metadata. You can visualize, cross-filter, and search across your data.
-
-**For embeddings**
-
-- 🏷️ **Automatic data clustering & labeling:**
-  Interactively visualize and navigate overall data structure.
-
-- 🫧 **Kernel density estimation & density contours:**
-  Easily explore and distinguish between dense regions of data and outliers.
-
-- 🧊 **Order-independent transparency:**
-  Ensure clear, accurate rendering of overlapping points.
-
-- 🔍 **Real-time search & nearest neighbors:**
-  Find similar data to a given query or existing data point.
-
-- 🚀 **Smooth performance at scale:**
-  Up to a few million points, powered by WebGPU.
-
-**For any tabular data**
-
-- 📊 **Linked dashboards & cross-filtering:**
-  Standard chart types (bar, line, bubble, count plot, eCDF) plus a composable chart spec for building custom charts like heatmaps and average-line overlays. Charts can be configured to cross-filter.
-
-- 🧩 **Multimodal data support:**
-  Built-in viewers for text, image, audio, numeric, categorical, and time columns.
-
-- 🤖 **AI agent access via MCP:**
-  AI agents can query the schema, run SQL, create charts, and capture screenshots via Model Context Protocol.
-
-Please visit <https://apple.github.io/embedding-atlas> for a demo and documentation.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./packages/docs/public/assets/embedding-atlas-dark.png">
-  <img alt="screenshot of Embedding Atlas" src="./packages/docs/public/assets/embedding-atlas-light.png">
-</picture>
-
-## Get started
-
-To use Embedding Atlas with Python:
-
-```bash
-pip install embedding-atlas
-
-embedding-atlas <your-dataset>
-```
-
-In addition to the command line tool, Embedding Atlas is available as a Python Notebook (e.g., Jupyter) widget:
-
-```python
-from embedding_atlas.widget import EmbeddingAtlasWidget
-
-# Show the Embedding Atlas widget for your data frame:
-EmbeddingAtlasWidget(df)
-```
-
-Finally, components from Embedding Atlas are also available in an npm package:
-
-```bash
-npm install embedding-atlas
-```
-
-```js
-import { EmbeddingAtlas, EmbeddingView } from "embedding-atlas";
-
-// or with React:
-import { EmbeddingAtlas, EmbeddingView } from "embedding-atlas/react";
-
-// or Svelte:
-import { EmbeddingAtlas, EmbeddingView } from "embedding-atlas/svelte";
-```
-
-For more information, please visit <https://apple.github.io/embedding-atlas/overview.html>.
-
 ## Astronomical 3D extension
 
 This fork adds an end-to-end **3D point cloud extension** to the embedding view, plus real
 astronomical data (fetched live from [LSDB](https://docs.lsdb.io)) to demonstrate it.
 
-### What's new
+##Example screenshots
+<img width="946" height="404" alt="image" src="https://github.com/user-attachments/assets/fa01e71f-408d-4246-9fed-e38489ed0307" />
+
+### 
 
 - **A navigable 3D point cloud view** (`EmbeddingView3D` / `EmbeddingView3DMosaic`, in
   `packages/component/src/lib/embedding_view/`), built on three.js, alongside the existing 2D
@@ -153,19 +74,6 @@ out genuine small-scale density structure in the underlying catalog (a probabili
 only remove stars, never fill in a real gap) into a smooth, round, cluster-like shape - each
 point is still a real catalog object, just nudged slightly off its exact position.
 
-**Known limitations, stated plainly:**
-
-- No catalog literally named "LSST" or "Roman" is available: the Roman Space Telescope hasn't
-  released public survey data yet, and Rubin/LSST's `dp1` ("Data Preview 1") release exists on
-  the LSDB server but isn't structured as a standard `lsdb.open_catalog`-able HATS catalog (only
-  flat crossmatch parquet files). Euclid Q1 was used instead as a second genuinely real,
-  independently-verified LSDB catalog.
-- LSDB's HATS server occasionally returned inconsistent row counts for the same cone-search
-  parameters across separate calls during development (observed, not fully root-caused); counts
-  reported here were confirmed reproducible by re-running the same query.
-- LSDB's internal `_healpix_29` spatial-index column is dropped from both datasets: its int64
-  values exceed JavaScript's safe integer range (2^53) for these catalogs, which crashed the
-  viewer's data table before the fix.
 
 ## BibTeX
 
