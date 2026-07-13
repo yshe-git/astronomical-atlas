@@ -81,9 +81,9 @@ class Embedder {
     return this.nnIndex;
   }
 
-  async umap(options: UMAPOptions = {}): Promise<Float32Array> {
+  async umap(options: UMAPOptions = {}, outputDim: number = 2): Promise<Float32Array> {
     let { data, count, dimension } = this._getData();
-    let umap = await createUMAP(count, dimension, 2, data, {
+    let umap = await createUMAP(count, dimension, outputDim, data, {
       metric: "cosine",
       ...options,
     });

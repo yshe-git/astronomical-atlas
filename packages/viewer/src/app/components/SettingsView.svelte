@@ -36,7 +36,7 @@
     text?: string;
     embedding?:
       | {
-          precomputed: { x: string; y: string; neighbors?: string };
+          precomputed: { x: string; y: string; z?: string; neighbors?: string };
         }
       | {
           compute: {
@@ -44,6 +44,9 @@
             type: "text" | "image";
             model: string;
             umapOptions?: UMAPOptions;
+            /** Number of output dimensions for the UMAP projection (default: 2). 3 computes a
+             *  3D projection and opens a navigable 3D embedding view instead of a flat plane. */
+            dimensions?: 2 | 3;
           };
         };
   }
@@ -61,6 +64,7 @@
 
   let embeddingXColumn: string | undefined = $state(undefined);
   let embeddingYColumn: string | undefined = $state(undefined);
+  let embeddingZColumn: string | undefined = $state(undefined);
   let embeddingNeighborsColumn: string | undefined = $state(undefined);
   let embeddingTextColumn: string | undefined = $state(undefined);
   let embeddingTextModel: string | undefined = $state(undefined);
@@ -71,6 +75,7 @@
   let umapMinDist = $state(0.1);
   let umapNNeighbors = $state(15);
   let umapGpu = $state(true);
+  let compute3D = $state(false);
 
   let numericalColumns = $derived(columns.filter((x) => jsTypeFromDBType(x.column_type) == "number"));
   let stringColumns = $derived(columns.filter((x) => jsTypeFromDBType(x.column_type) == "string"));
@@ -89,6 +94,7 @@
         precomputed: {
           x: embeddingXColumn,
           y: embeddingYColumn,
+          z: embeddingZColumn != undefined ? embeddingZColumn : undefined,
           neighbors: embeddingNeighborsColumn != undefined ? embeddingNeighborsColumn : undefined,
         },
       };
@@ -101,7 +107,9 @@
       let umapOptions = showUmapOptions
         ? { minDist: umapMinDist, nNeighbors: umapNNeighbors, gpu: umapGpu }
         : undefined;
-      value.embedding = { compute: { column: embeddingTextColumn, type: "text", model: model, umapOptions } };
+      value.embedding = {
+        compute: { column: embeddingTextColumn, type: "text", model: model, umapOptions, dimensions: compute3D ? 3 : 2 },
+      };
     }
     if (embeddingMode == "from-image" && embeddingImageColumn != undefined) {
       let model = embeddingImageModel?.trim() ?? "";
@@ -111,7 +119,9 @@
       let umapOptions = showUmapOptions
         ? { minDist: umapMinDist, nNeighbors: umapNNeighbors, gpu: umapGpu }
         : undefined;
-      value.embedding = { compute: { column: embeddingImageColumn, type: "image", model: model, umapOptions } };
+      value.embedding = {
+        compute: { column: embeddingImageColumn, type: "image", model: model, umapOptions, dimensions: compute3D ? 3 : 2 },
+      };
     }
     onConfirm?.(value);
   }
@@ -185,6 +195,21 @@
         />
       </div>
       <div class="w-full flex flex-row items-center">
+        <div class="w-[6rem] dark:text-slate-400">Z (optional)</div>
+        <Select
+          class="flex-1 min-w-0"
+          value={embeddingZColumn}
+          onChange={(v) => (embeddingZColumn = v)}
+          options={[
+            { value: undefined, label: "(none)" },
+            ...numericalColumns.map((x) => ({ value: x.column_name, label: `${x.column_name} (${x.column_type})` })),
+          ]}
+        />
+      </div>
+      <p class="text-sm text-slate-400 dark:text-slate-600">
+        Selecting a Z column opens a navigable 3D embedding view instead of a flat 2D plane.
+      </p>
+      <div class="w-full flex flex-row items-center">
         <div class="w-[6rem] dark:text-slate-400">Neighbors</div>
         <Select
           class="flex-1 min-w-0"
@@ -257,6 +282,10 @@
       </p>
     {/if}
     {#if embeddingMode == "from-text" || embeddingMode == "from-image"}
+      <div class="w-full flex flex-row items-center">
+        <div class="w-[6rem] dark:text-slate-400">Dimensions</div>
+        <CheckBox bind:checked={compute3D} label="Compute a 3D projection (navigable 3D view)" />
+      </div>
       <button
         class="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 select-none mt-1"
         onclick={() => (showUmapOptions = !showUmapOptions)}
