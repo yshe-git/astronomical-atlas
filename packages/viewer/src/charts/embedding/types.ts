@@ -9,6 +9,8 @@ export interface EmbeddingSpec {
   data: {
     x: string;
     y: string;
+    /** The Z column. When set, the embedding view renders as a navigable 3D point cloud. */
+    z?: string | null;
     text?: string | null;
     image?: string | null;
     importance?: string | null;

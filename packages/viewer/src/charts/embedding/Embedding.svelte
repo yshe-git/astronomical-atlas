@@ -28,7 +28,7 @@
 </script>
 
 <script lang="ts">
-  import { EmbeddingViewMosaic } from "@embedding-atlas/component/svelte";
+  import { EmbeddingView3DMosaic, EmbeddingViewMosaic } from "@embedding-atlas/component/svelte";
   import { cubicOut } from "svelte/easing";
 
   import Button from "../../widgets/Button.svelte";
@@ -245,6 +245,32 @@
 </script>
 
 <div class="relative bg-white dark:bg-black">
+  {#if spec.data.z != null}
+    <EmbeddingView3DMosaic
+      width={width}
+      height={height}
+      coordinator={context.coordinator}
+      table={context.table}
+      filter={context.filter}
+      identifier={context.id}
+      x={spec.data.x}
+      y={spec.data.y}
+      z={spec.data.z}
+      category={categoryLegend?.indexColumn}
+      categoryColors={categoryLegend?.legend.map((x) => x.color) ?? [theme.embeddingColor]}
+      additionalFields={Object.fromEntries(context.columns.map((c) => [c.name, c.name]))}
+      pointSize={spec.pointSize}
+      downsampleMaxPoints={spec.downsampleMaxPoints}
+      selection={selection}
+      onSelection={(points: DataPoint[] | null) => {
+        selection = points;
+        highlightStore.set(points?.map((p) => p.identifier) ?? null);
+      }}
+      onTooltip={(v: DataPoint | null) => {
+        tooltip = v;
+      }}
+    />
+  {:else}
   <EmbeddingViewMosaic
     width={width}
     height={height}
@@ -324,6 +350,7 @@
       highlightStore.set(points?.map((p) => p.identifier) ?? null);
     }}
   />
+  {/if}
   <div class="absolute top-0 left-0 right-0 flex flex-wrap justify-between items-start pointer-events-none">
     {#if categoryLegend != null}
       <div
