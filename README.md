@@ -4,7 +4,7 @@ This fork adds an end-to-end **3D point cloud extension** to the embedding view,
 astronomical data (fetched live from [LSDB](https://docs.lsdb.io)) to demonstrate it.
 
 Example screenshots
-<img width="946" height="404" alt="image" src="https://github.com/user-attachments/assets/fa01e71f-408d-4246-9fed-e38489ed0307" />
+<img width="956" height="406" alt="image" src="https://github.com/user-attachments/assets/e3cdd7d8-d6f5-42b3-9858-e04df02624da" />
 
 ### 
 
